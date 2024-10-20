@@ -81,4 +81,4 @@ Although this package does [avoid the use of `eval()`](https://developer.mozilla
 
 ## License
 
-MIT License.
+Apache 2.0 License.
