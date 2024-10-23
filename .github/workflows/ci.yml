@@ -45,7 +45,7 @@ jobs:
   release:
     needs: report
     runs-on: ubuntu-latest
-    if: github.repository == 'node-casbin/expression-eval' && github.event_name == 'push'
+    if: github.repository == 'tx2002/expression-eval' && github.event_name == 'push'
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js
