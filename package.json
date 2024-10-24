@@ -9,7 +9,7 @@
   "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/node-casbin/expression-eval"
+    "url": "https://github.com/tx2002/expression-eval"
   },
   "scripts": {
     "dev": "microbundle watch",
