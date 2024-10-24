@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/tx2002/expression-eval/compare/v1.0.0...v1.1.0) (2024-10-24)
+
+
+### Features
+
+* fix publish ([426c689](https://github.com/tx2002/expression-eval/commit/426c689cc7fc37d693933e4e54119ffc5d496ab4))
+
 # 1.0.0 (2024-10-24)
 
 
