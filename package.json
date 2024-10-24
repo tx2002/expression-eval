@@ -1,6 +1,6 @@
 {
-  "name": "expression-eval",
-  "version": "5.0.1",
+  "name": "@casbin/expression-eval",
+  "version": "5.0.2",
   "description": "JavaScript expression parsing and evaluation.",
   "source": "index.ts",
   "main": "dist/expression-eval.js",
@@ -9,7 +9,7 @@
   "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/donmccurdy/expression-eval.git"
+    "url": "https://github.com/node-casbin/expression-eval.git"
   },
   "scripts": {
     "dev": "microbundle watch",
@@ -32,7 +32,7 @@
     "tree",
     "math"
   ],
-  "author": "Don McCurdy <dm@donmccurdy.com>",
+  "author": "Node-Casbin",
   "license": "MIT",
   "dependencies": {
     "jsep": "^0.3.0"
