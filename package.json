@@ -15,8 +15,8 @@
     "dev": "microbundle watch",
     "build": "microbundle",
     "test": "jest",
-    "preversion": "npm run build && npm test",
-    "postversion": "git push && git push --tags && npm publish",
+    "prepublish": "yarn lint && yarn build",
+    "release": "standard-version",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --ext .ts",
     "coverage": "jest --coverage"
