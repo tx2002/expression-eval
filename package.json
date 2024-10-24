@@ -1,5 +1,5 @@
 {
-  "name": "expression-eval",
+  "name": "expression-eval-1",
   "version": "5.0.2",
   "description": "JavaScript expression parsing and evaluation.",
   "source": "index.ts",
