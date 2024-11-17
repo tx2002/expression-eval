@@ -125,7 +125,7 @@ function evaluate(_node: jsep.Expression, context: object) {
     case 'BinaryExpression':
       return binops[node.operator](evaluate(node.left, context), evaluate(node.right, context));
 
-    case 'CallExpression': {
+    case 'CallExpression':
       let caller, fn, assign;
       if (node.callee.type === 'MemberExpression') {
         assign = evaluateMember(node.callee as jsep.MemberExpression, context);
@@ -136,7 +136,6 @@ function evaluate(_node: jsep.Expression, context: object) {
       }
       if (typeof fn !== 'function') { return undefined; }
       return fn.apply(caller, evaluateArray(node.arguments, context));
-    }
 
     case 'ConditionalExpression':
       return evaluate(node.test, context)
