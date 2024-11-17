@@ -190,7 +190,7 @@ async function evalAsync(_node: jsep.Expression, context: object) {
       return binops[node.operator](left, right);
     }
 
-    case 'CallExpression': {
+    case 'CallExpression':
       let caller, fn, assign;
       if (node.callee.type === 'MemberExpression') {
         assign = await evaluateMemberAsync(node.callee as jsep.MemberExpression, context);
@@ -206,7 +206,6 @@ async function evalAsync(_node: jsep.Expression, context: object) {
         caller,
         await evaluateArrayAsync(node.arguments, context)
       );
-    }
 
     case 'ConditionalExpression':
       return (await evalAsync(node.test, context))
