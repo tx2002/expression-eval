@@ -2,6 +2,29 @@ require('source-map-support').install();
 
 const expr = require('./dist/expression-eval.js');
 
+const context = {
+    string: 'string',
+    number: 123,
+    bool: true,
+    one: 1,
+    two: 2,
+    three: 3,
+    foo: {bar: 'baz', baz: 'wow', func: function(x) { return this[x]; }},
+    numMap: {10: 'ten', 3: 'three'},
+    list: [1,2,3,4,5],
+    func: function(x) { return x + 1; },
+    isArray: Array.isArray,
+    throw: () => { throw new Error('Should not be called.'); },
+    asyncFunc: async function(a, b) {
+      return await a + b;
+    },
+    promiseFunc: function(a, b) {
+      return new Promise((resolve) => {
+        setTimeout(() => resolve(a + b), 1000);
+      });
+    }
+  };
+
 const fixtures = [
 
   // array expression
@@ -93,69 +116,38 @@ const fixtures = [
   {expr: '1 + 2 ~ 3', expected: 9 }, // ~ is * but with low precedence
 ];
 
-const context = {
-  string: 'string',
-  number: 123,
-  bool: true,
-  one: 1,
-  two: 2,
-  three: 3,
-  foo: {bar: 'baz', baz: 'wow', func: function(x) { return this[x]; }},
-  numMap: {10: 'ten', 3: 'three'},
-  list: [1,2,3,4,5],
-  func: function(x) { return x + 1; },
-  isArray: Array.isArray,
-  throw: () => { throw new Error('Should not be called.'); }
-};
+// // 异步测试函数
+// async function runAsyncTests() {
+//   // 创建测试数据
+//   const asyncFixtures = fixtures.concat([
+//     { expr: 'asyncFunc(one, two)', expected: 3 },
+//     { expr: 'promiseFunc(one, two)', expected: 3 },
+//   ]);
 
-expr.addUnaryOp('@', (a) => {
-  if (a === 2) {
-    return 'two';
-  }
-  throw new Error('Unexpected value: ' + a);
-});
+//   // 遍历测试数据并执行
+//   for (let o of asyncFixtures) {
+//     try {
+//       const val = await expr.compileAsync(o.expr)(context);  // 编译并执行异步表达式
+//       console.log(`Expression: ${o.expr}, Expected: ${o.expected}, Got: ${val}`);
+//       // 检查结果是否符合预期
+//       if (val === o.expected) {
+//         console.log(`Test Passed: ${o.expr}`);
+//       } else {
+//         console.log(`Test Failed: ${o.expr}`);
+//       }
+//     } catch (err) {
+//       console.log(`Error evaluating expression ${o.expr}:`, err);
+//     }
+//   }
+// }
 
-expr.addBinaryOp('#', (a, b) => a + b / 10);
+// // 执行异步测试
+// runAsyncTests();
 
-expr.addBinaryOp('~', 1, (a, b) => a * b);
 
-test('sync', () => {
-  fixtures.forEach((o) => {
-    const val = expr.compile(o.expr)(context);
-    expect(val).toBe(o.expected);
-  });
-});
+async function test() {
+    const a = await expr.compileAsync('true || throw()')(context);
+    console.log(a);
+}
 
-test('async', async () => {
-  const asyncContext = context;
-  asyncContext.asyncFunc = async function (a, b) {
-    return await a + b;
-  };
-  asyncContext.promiseFunc = function (a, b) {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(a + b), 1000);
-    });
-  };
-  const asyncFixtures = fixtures.concat([
-    { expr: 'asyncFunc(one, two)', expected: 3 },
-    { expr: 'promiseFunc(one, two)', expected: 3 },
-  ]);
-
-  for (let o of asyncFixtures) {
-    const val = await expr.compileAsync(o.expr)(asyncContext);
-    expect(val).toBe(o.expected);
-  }
-});
-
-test('errors', () => {
-  const expectedMsg = /Access to member "\w+" disallowed/;
-  expect(() => expr.compile(`o.__proto__`)({ o: {} })).toThrow(expectedMsg);
-  expect(() => expr.compile(`o.prototype`)({ o: {} })).toThrow(expectedMsg);
-  expect(() => expr.compile(`o.constructor`)({ o: {} })).toThrow(expectedMsg);
-  expect(() => expr.compile(`o['__proto__']`)({ o: {} })).toThrow(expectedMsg);
-  expect(() => expr.compile(`o['prototype']`)({ o: {} })).toThrow(expectedMsg);
-  expect(() => expr.compile(`o['constructor']`)({ o: {} })).toThrow(expectedMsg);
-  expect(() => expr.compile(`o[p]`)({ o: {}, p: '__proto__' })).toThrow(expectedMsg);
-  expect(() => expr.compile(`o[p]`)({ o: {}, p: 'prototype' })).toThrow(expectedMsg);
-  expect(() => expr.compile(`o[p]`)({ o: {}, p: 'constructor' })).toThrow(expectedMsg);
-});
+test();

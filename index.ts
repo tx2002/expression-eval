@@ -125,7 +125,7 @@ function evaluate(_node: jsep.Expression, context: object) {
     case 'BinaryExpression':
       return binops[node.operator](evaluate(node.left, context), evaluate(node.right, context));
 
-    case 'CallExpression': {
+    case 'CallExpression':
       let caller, fn, assign;
       if (node.callee.type === 'MemberExpression') {
         assign = evaluateMember(node.callee as jsep.MemberExpression, context);
@@ -136,7 +136,6 @@ function evaluate(_node: jsep.Expression, context: object) {
       }
       if (typeof fn !== 'function') { return undefined; }
       return fn.apply(caller, evaluateArray(node.arguments, context));
-    }
 
     case 'ConditionalExpression':
       return evaluate(node.test, context)
@@ -150,10 +149,11 @@ function evaluate(_node: jsep.Expression, context: object) {
       return node.value;
 
     case 'LogicalExpression':
-      if (node.operator === '||') {
-        return evaluate(node.left, context) || evaluate(node.right, context);
-      } else if (node.operator === '&&') {
-        return evaluate(node.left, context) && evaluate(node.right, context);
+      const leftValue = evaluate(node.left, context);
+      if (node.operator === '||' && leftValue) {
+        return leftValue;
+      } else if (node.operator === '&&' && !leftValue) {
+        return leftValue;
       }
       return binops[node.operator](evaluate(node.left, context), evaluate(node.right, context));
 
@@ -222,15 +222,19 @@ async function evalAsync(_node: jsep.Expression, context: object) {
 
     case 'LogicalExpression': {
       if (node.operator === '||') {
-        return (
-          (await evalAsync(node.left, context)) ||
-          (await evalAsync(node.right, context))
-        );
+        const left = await evalAsync(node.left, context);
+        if (left) {
+          return left;
+        }
+        const right = await evalAsync(node.right, context);
+        return right;
       } else if (node.operator === '&&') {
-        return (
-          (await evalAsync(node.left, context)) &&
-          (await evalAsync(node.right, context))
-        );
+        const left = await evalAsync(node.left, context);
+        if (!left) {
+          return left;
+        }
+        const right = await evalAsync(node.right, context);
+        return right;
       }
 
       const [left, right] = await Promise.all([
