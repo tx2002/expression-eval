@@ -156,7 +156,7 @@ function evaluate(_node: jsep.Expression, context: object) {
       } else if (node.operator === '&&' && !leftValue) {
         return leftValue;
       }
-      return binops[node.operator](evaluate(node.left, context), evaluate(node.right, context));
+      return binops[node.operator](leftValue, evaluate(node.right, context));
 
     case 'MemberExpression':
       return evaluateMember(node, context)[1];
@@ -227,15 +227,13 @@ async function evalAsync(_node: jsep.Expression, context: object) {
         if (left) {
           return left;
         }
-        const right = await evalAsync(node.right, context);
-        return right;
+        return await evalAsync(node.right, context);
       } else if (node.operator === '&&') {
         const left = await evalAsync(node.left, context);
         if (!left) {
           return left;
         }
-        const right = await evalAsync(node.right, context);
-        return right;
+        return await evalAsync(node.right, context);
       }
 
       const [left, right] = await Promise.all([
